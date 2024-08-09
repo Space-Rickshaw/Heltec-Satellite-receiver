@@ -13,7 +13,7 @@
 #define SATELLITE_HEALTH_PACKET_SIZE 41
 
 #define UPLINK_COMMAND_RESPONSE_PACKET_ID 3
-#define UPLINK_COMMAND_RESPONSE_PACKET_SIZE 26
+#define UPLINK_COMMAND_RESPONSE_PACKET_SIZE 24
 
 #define POWER_DATA_PACKET_ID 10
 #define POWER_DATA_PACKET_SIZE 36
@@ -24,9 +24,16 @@
 #define RADIATION_DATA_PACKET_ID 13
 #define RADIATION_DATA_PACKET_SIZE 17
 
+#define SYSTEM_CONFIG_PACKET_ID 14
+#define SYSTEM_CONFIG_PACKET_SIZE 45
+
+#define IMU_PACKET_ID 7
+#define IMU_PACKET_SIZE 47
+
+
 #define STORE_AND_FORWARD_MESSAGE_PACKET_ID 2
 
-float radioFrequency = 434.0;
+float radioFrequency = 437.4;
 int size = 100;
 String str = "";
 int size_of_packet = 100;
@@ -103,7 +110,7 @@ void setup() {
   // ----------------------------------
 
   int state = radio.begin(radioFrequency);
-  radio.setOutputPower(22);
+  radio.setOutputPower(20);
   radio.setCurrentLimit(140);
 
   if (state == RADIOLIB_ERR_NONE) {
@@ -236,12 +243,14 @@ void loop() {
         size_of_packet = TEMPERATURE_DATA_PACKET_SIZE;
       } else if (packet_type == RADIATION_DATA_PACKET_ID) {
         size_of_packet = RADIATION_DATA_PACKET_SIZE;
+      }else if (packet_type == SYSTEM_CONFIG_PACKET_ID) {
+        size_of_packet = SYSTEM_CONFIG_PACKET_SIZE;
       }else if(packet_type == STORE_AND_FORWARD_MESSAGE_PACKET_ID){
-        size_of_packet = (byteArr[10]) + 2;
+        size_of_packet = (byteArr[11]) + 12;
       }
       for (int i = 0; i < size_of_packet; i++) {
         Serial.print(byteArr[i]);
-
+         
         // if (byteArr[i] < 16) {
         //   str += "0" + (String(byteArr[i], HEX));
         // } else {
